@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ali Bayraktar — Computer Engineer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root[data-theme="dark"] {
+    --bg: #080c10;
+    --bg2: #0e1318;
+    --bg3: #141c24;
+    --surface: #1a2330;
+    --border: rgba(255,255,255,0.07);
+    --text: #e8edf2;
+    --text2: #7a8fa3;
+    --text3: #4a5f73;
+    --accent: #00d4ff;
+    --accent2: #0099cc;
+    --accent-glow: rgba(0,212,255,0.15);
+    --accent-glow2: rgba(0,212,255,0.05);
+    --tag-bg: rgba(0,212,255,0.08);
+    --tag-border: rgba(0,212,255,0.2);
+    --card-hover: rgba(0,212,255,0.04);
+    --noise: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  }
+  :root[data-theme="light"] {
+    --bg: #f0f4f8;
+    --bg2: #e8eef5;
+    --bg3: #dde5ee;
+    --surface: #ffffff;
+    --border: rgba(0,0,0,0.08);
+    --text: #0d1b2a;
+    --text2: #4a6480;
+    --text3: #8aa0b8;
+    --accent: #0070a8;
+    --accent2: #005580;
+    --accent-glow: rgba(0,112,168,0.12);
+    --accent-glow2: rgba(0,112,168,0.04);
+    --tag-bg: rgba(0,112,168,0.07);
+    --tag-border: rgba(0,112,168,0.18);
+    --card-hover: rgba(0,112,168,0.03);
+    --noise: none;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Mono', monospace;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+    transition: background 0.4s ease, color 0.4s ease;
+    overflow-x: hidden;
+  }
+
+  /* Background grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    top: -40%;
+    right: -20%;
+    width: 80vw;
+    height: 80vw;
+    background: radial-gradient(ellipse at center, var(--accent-glow) 0%, transparent 65%);
+    pointer-events: none;
+    z-index: 0;
+    animation: pulse 8s ease-in-out infinite alternate;
+  }
+
+  @keyframes pulse {
+    0% { transform: scale(1) translate(0, 0); opacity: 0.7; }
+    100% { transform: scale(1.1) translate(-3%, 5%); opacity: 1; }
+  }
+
+  /* Topbar */
+  .topbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 clamp(20px, 5vw, 60px);
+    height: 64px;
+    background: rgba(8,12,16,0.8);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    transition: background 0.4s ease;
+  }
+
+  [data-theme="light"] .topbar {
+    background: rgba(240,244,248,0.85);
+  }
+
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+    letter-spacing: -0.03em;
+    color: var(--text);
+  }
+
+  .logo span { color: var(--accent); }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Language selector */
+  .lang-group {
+    display: flex;
+    gap: 2px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 3px;
+  }
+
+  .lang-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border: none;
+    border-radius: 5px;
+    background: transparent;
+    color: var(--text2);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .lang-btn.active {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  .lang-btn:hover:not(.active) {
+    background: var(--bg3);
+    color: var(--text);
+  }
+
+  /* Theme toggle */
+  .theme-toggle {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text2);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    transition: all 0.2s ease;
+  }
+
+  .theme-toggle:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-glow2);
+  }
+
+  /* Main container */
+  main {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 120px clamp(20px, 5vw, 40px) 80px;
+  }
+
+  /* Hero */
+  .hero {
+    margin-bottom: 80px;
+    animation: fadeUp 0.8s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-label {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .hero-label::before {
+    content: '';
+    display: block;
+    width: 28px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(48px, 9vw, 88px);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+    color: var(--text);
+    margin-bottom: 24px;
+  }
+
+  h1 .line2 {
+    color: var(--accent);
+    display: block;
+  }
+
+  .hero-bio {
+    max-width: 540px;
+    font-size: 14px;
+    color: var(--text2);
+    line-height: 1.75;
+    margin-bottom: 36px;
+  }
+
+  /* CTA Buttons */
+  .cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    padding: 12px 22px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--accent);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+
+  .btn span { position: relative; z-index: 1; }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+
+  .btn-primary:hover {
+    background: var(--accent2);
+    border-color: var(--accent2);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px var(--accent-glow);
+  }
+
+  .btn-ghost {
+    background: var(--surface);
+    color: var(--text);
+    border-color: var(--border);
+  }
+
+  .btn-ghost:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-glow2);
+    transform: translateY(-1px);
+  }
+
+  .btn-linkedin { }
+  .btn-github { }
+
+  /* Social icon SVGs */
+  .icon-linkedin, .icon-github, .icon-mail, .icon-phone {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+  }
+
+  /* Divider */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, var(--accent) 0%, transparent 60%);
+    margin: 64px 0;
+    opacity: 0.3;
+  }
+
+  /* Section */
+  section {
+    margin-bottom: 64px;
+    animation: fadeUp 0.8s ease both;
+  }
+
+  section:nth-child(2) { animation-delay: 0.1s; }
+  section:nth-child(3) { animation-delay: 0.2s; }
+  section:nth-child(4) { animation-delay: 0.3s; }
+  section:nth-child(5) { animation-delay: 0.4s; }
+  section:nth-child(6) { animation-delay: 0.5s; }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 32px;
+  }
+
+  .section-num {
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    font-weight: 500;
+  }
+
+  h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Cards */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 16px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--accent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: 3px 0 0 3px;
+  }
+
+  .card:hover {
+    background: var(--card-hover);
+    border-color: var(--accent);
+    transform: translateX(4px);
+  }
+
+  .card:hover::before { opacity: 1; }
+
+  .card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+
+  .card-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+
+  .card-sub {
+    font-size: 12px;
+    color: var(--accent);
+    margin-top: 2px;
+  }
+
+  .card-date {
+    font-size: 11px;
+    color: var(--text3);
+    white-space: nowrap;
+    padding: 3px 10px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    background: var(--bg2);
+  }
+
+  .card-desc {
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.7;
+  }
+
+  .card-bullets {
+    list-style: none;
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .card-bullets li {
+    font-size: 12px;
+    color: var(--text2);
+    padding-left: 16px;
+    position: relative;
+    line-height: 1.6;
+  }
+
+  .card-bullets li::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  /* Skills grid */
+  .skills-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .skill-tag {
+    font-size: 12px;
+    padding: 7px 14px;
+    border-radius: 6px;
+    background: var(--tag-bg);
+    border: 1px solid var(--tag-border);
+    color: var(--accent);
+    letter-spacing: 0.02em;
+    transition: all 0.2s ease;
+    cursor: default;
+  }
+
+  .skill-tag:hover {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  /* Languages */
+  .lang-list {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .lang-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-size: 13px;
+    color: var(--text);
+    transition: all 0.2s ease;
+  }
+
+  .lang-item:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .lang-flag {
+    font-size: 20px;
+  }
+
+  /* Certs */
+  .cert-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .cert-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--text);
+    transition: all 0.2s ease;
+  }
+
+  .cert-item:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateX(4px);
+  }
+
+  .cert-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    background: var(--accent-glow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  /* Contact row */
+  .contact-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .contact-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text2);
+    padding: 10px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .contact-item:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* Footer */
+  footer {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 40px clamp(20px, 5vw, 40px);
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--text3);
+    letter-spacing: 0.05em;
+  }
+
+  /* Utility */
+  [data-lang] { display: none; }
+  [data-lang].visible { display: block; }
+  [data-lang-inline] { display: none; }
+  [data-lang-inline].visible { display: inline; }
+
+  @media (max-width: 600px) {
+    h1 { font-size: clamp(36px, 12vw, 60px); }
+    .topbar { padding: 0 16px; }
+    .lang-btn { padding: 4px 7px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="logo">Ali<span>.</span>dev</div>
+  <div class="topbar-right">
+    <div class="lang-group">
+      <button class="lang-btn active" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('tr')">TR</button>
+      <button class="lang-btn" onclick="setLang('de')">DE</button>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+      <span id="themeIcon">☀️</span>
+    </button>
+  </div>
+</div>
+
+<main>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-label">
+      <span data-lang="en" class="visible">Computer Engineering Student</span>
+      <span data-lang="tr">Bilgisayar Mühendisliği Öğrencisi</span>
+      <span data-lang="de">Student der Informatik</span>
+    </div>
+    <h1>
+      Ali
+      <span class="line2">Bayraktar</span>
+    </h1>
+    <p class="hero-bio">
+      <span data-lang="en" class="visible">2nd year Computer Engineering student at Abdullah Gül University. Passionate about artificial intelligence, data science, and algorithms. Building the future one algorithm at a time.</span>
+      <span data-lang="tr">Abdullah Gül Üniversitesi'nde 2. sınıf Bilgisayar Mühendisliği öğrencisi. Yapay zeka, veri bilimi ve algoritmalar konusunda tutkulu. Geleceği bir algoritma ile inşa ediyorum.</span>
+      <span data-lang="de">Informatikstudent im 2. Jahr an der Abdullah Gül Universität. Leidenschaftlich für Künstliche Intelligenz, Data Science und Algorithmen. Ich baue die Zukunft Algorithmus für Algorithmus.</span>
+    </p>
+    <div class="cta-row">
+      <a class="btn btn-primary btn-linkedin" href="https://www.linkedin.com/in/ali-bayraktar-b64072286" target="_blank" rel="noopener">
+        <svg class="icon-linkedin" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        LinkedIn
+      </a>
+      <a class="btn btn-ghost btn-github" href="https://github.com/alibayraktar00" target="_blank" rel="noopener">
+        <svg class="icon-github" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+        GitHub
+      </a>
+      <a class="btn btn-ghost" href="mailto:bayraktara508@gmail.com">
+        <svg class="icon-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+        bayraktara508@gmail.com
+      </a>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- EDUCATION -->
+  <section>
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2>
+        <span data-lang="en" class="visible">Education</span>
+        <span data-lang="tr">Eğitim</span>
+        <span data-lang="de">Ausbildung</span>
+      </h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">
+            <span data-lang="en" class="visible">Bachelor's Degree — Computer Engineering</span>
+            <span data-lang="tr">Lisans — Bilgisayar Mühendisliği</span>
+            <span data-lang="de">Bachelor — Informatik</span>
+          </div>
+          <div class="card-sub">Abdullah Gül University · Kayseri, Türkiye</div>
+        </div>
+        <span class="card-date">2023 – 2028</span>
+      </div>
+      <p class="card-desc">
+        <span data-lang="en" class="visible">Focusing on AI, data science, and algorithm development. Actively participating in UAV teams and personal projects to build real-world engineering experience.</span>
+        <span data-lang="tr">Yapay zeka, veri bilimi ve algoritma geliştirme üzerine yoğunlaşıyor. İnsansız hava aracı ekipleri ve kişisel projelerle gerçek dünya mühendislik deneyimi kazanıyor.</span>
+        <span data-lang="de">Schwerpunkt auf KI, Data Science und Algorithmenentwicklung. Aktive Teilnahme an UAV-Teams und persönlichen Projekten zur praxisnahen Erfahrung.</span>
+      </p>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section>
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2>
+        <span data-lang="en" class="visible">Experience</span>
+        <span data-lang="tr">Deneyim</span>
+        <span data-lang="de">Erfahrung</span>
+      </h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">
+            <span data-lang="en" class="visible">Combat Drone Project — Project Member</span>
+            <span data-lang="tr">Muharip İHA Projesi — Proje Üyesi</span>
+            <span data-lang="de">Kampfdrohnen-Projekt — Projektmitglied</span>
+          </div>
+          <div class="card-sub">Tulpar UAV Team · Kayseri, Türkiye</div>
+        </div>
+        <span class="card-date">2024 – 2026</span>
+      </div>
+      <ul class="card-bullets">
+        <li data-lang="en" class="visible">Researched AI-based maneuvering and target recognition algorithms for autonomous drones.</li>
+        <li data-lang="tr">Otonom insansız hava araçları için yapay zeka tabanlı manevra ve hedef tanıma algoritmaları üzerine araştırma yapıldı.</li>
+        <li data-lang="de">Forschung zu KI-basierten Manöver- und Zielerkennungsalgorithmen für autonome Drohnen.</li>
+
+        <li data-lang="en" class="visible">Created a custom dataset for object detection and tracking, including data labeling and preprocessing.</li>
+        <li data-lang="tr">Nesne tespiti ve takibi için veri etiketleme ve ön işleme dahil özel veri seti oluşturuldu.</li>
+        <li data-lang="de">Erstellung eines benutzerdefinierten Datensatzes für Objekterkennung und -verfolgung, einschließlich Datenbeschriftung.</li>
+
+        <li data-lang="en" class="visible">Investigated computer vision algorithms including YOLO and Haar Cascades for real-time detection.</li>
+        <li data-lang="tr">Gerçek zamanlı tespit için YOLO ve Haar Cascades dahil bilgisayarlı görü algoritmaları incelendi.</li>
+        <li data-lang="de">Untersuchung von Computer-Vision-Algorithmen wie YOLO und Haar Cascades für Echtzeiterkennung.</li>
+
+        <li data-lang="en" class="visible">Developed basic decision-making algorithms for drone responsiveness in simulated environments.</li>
+        <li data-lang="tr">Simüle ortamlarda insansız hava aracı tepkisi için temel karar verme algoritmaları geliştirildi.</li>
+        <li data-lang="de">Entwicklung grundlegender Entscheidungsalgorithmen für Drohnenreaktionsfähigkeit in simulierten Umgebungen.</li>
+
+        <li data-lang="en" class="visible">Enhanced teamwork and problem-solving skills through collaborative development and testing.</li>
+        <li data-lang="tr">İş birliğine dayalı geliştirme ve test süreçleri aracılığıyla takım çalışması ve problem çözme becerileri geliştirildi.</li>
+        <li data-lang="de">Verbesserung von Teamarbeit und Problemlösungsfähigkeiten durch kollaborative Entwicklungs- und Testprozesse.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section>
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2>
+        <span data-lang="en" class="visible">Projects</span>
+        <span data-lang="tr">Projeler</span>
+        <span data-lang="de">Projekte</span>
+      </h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Gym Buddy</div>
+          <div class="card-sub">
+            <span data-lang="en" class="visible">Cross-Platform Mobile Fitness Application</span>
+            <span data-lang="tr">Çok Platformlu Mobil Fitness Uygulaması</span>
+            <span data-lang="de">Plattformübergreifende mobile Fitness-App</span>
+          </div>
+        </div>
+      </div>
+      <ul class="card-bullets">
+        <li data-lang="en" class="visible">Developed a cross-platform mobile application using Flutter framework.</li>
+        <li data-lang="tr">Flutter framework kullanılarak çok platformlu mobil uygulama geliştirildi.</li>
+        <li data-lang="de">Entwicklung einer plattformübergreifenden mobilen App mit dem Flutter-Framework.</li>
+
+        <li data-lang="en" class="visible">Applied Clean Architecture principles for scalability and maintainability.</li>
+        <li data-lang="tr">Ölçeklenebilirlik ve sürdürülebilirlik için Temiz Mimari ilkeleri uygulandı.</li>
+        <li data-lang="de">Anwendung von Clean-Architecture-Prinzipien für Skalierbarkeit und Wartbarkeit.</li>
+
+        <li data-lang="en" class="visible">Implemented state management with Provider / Riverpod and Firebase backend integration.</li>
+        <li data-lang="tr">Provider / Riverpod ile durum yönetimi ve Firebase backend entegrasyonu uygulandı.</li>
+        <li data-lang="de">State-Management mit Provider / Riverpod und Firebase-Backend-Integration implementiert.</li>
+
+        <li data-lang="en" class="visible">Designed and consumed REST APIs for dynamic data handling and real-time sync.</li>
+        <li data-lang="tr">Dinamik veri işleme ve gerçek zamanlı senkronizasyon için REST API'leri tasarlandı ve kullanıldı.</li>
+        <li data-lang="de">REST-APIs für dynamische Datenverarbeitung und Echtzeitsynchronisation entworfen und integriert.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section>
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2>
+        <span data-lang="en" class="visible">Skills</span>
+        <span data-lang="tr">Beceriler</span>
+        <span data-lang="de">Fähigkeiten</span>
+      </h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="skills-grid">
+      <span class="skill-tag">C Programming</span>
+      <span class="skill-tag">Java</span>
+      <span class="skill-tag">Flutter</span>
+      <span class="skill-tag">Object Oriented Programming</span>
+      <span class="skill-tag">Data Structures &amp; Algorithms</span>
+      <span class="skill-tag">YOLO / Computer Vision</span>
+      <span class="skill-tag">Firebase</span>
+      <span class="skill-tag">REST API</span>
+      <span class="skill-tag">Clean Architecture</span>
+      <span class="skill-tag">Riverpod / Provider</span>
+      <span class="skill-tag">Machine Learning</span>
+      <span class="skill-tag">Dataset Labeling</span>
+    </div>
+  </section>
+
+  <!-- LANGUAGES -->
+  <section>
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <h2>
+        <span data-lang="en" class="visible">Languages</span>
+        <span data-lang="tr">Diller</span>
+        <span data-lang="de">Sprachen</span>
+      </h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="lang-list">
+      <div class="lang-item">
+        <span class="lang-flag">🇹🇷</span>
+        <span data-lang="en" class="visible">Turkish — Native</span>
+        <span data-lang="tr">Türkçe — Anadil</span>
+        <span data-lang="de">Türkisch — Muttersprache</span>
+      </div>
+      <div class="lang-item">
+        <span class="lang-flag">🇬🇧</span>
+        <span data-lang="en" class="visible">English — Professional</span>
+        <span data-lang="tr">İngilizce — Profesyonel</span>
+        <span data-lang="de">Englisch — Professionell</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CERTIFICATES -->
+  <section>
+    <div class="section-header">
+      <span class="section-num">06</span>
+      <h2>
+        <span data-lang="en" class="visible">Certificates</span>
+        <span data-lang="tr">Sertifikalar</span>
+        <span data-lang="de">Zertifikate</span>
+      </h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="cert-list">
+      <div class="cert-item">
+        <div class="cert-icon">🏆</div>
+        <span>Google AI Professional Certificate</span>
+      </div>
+      <div class="cert-item">
+        <div class="cert-icon">🚀</div>
+        <span>Tech &amp; Career Summit</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section>
+    <div class="section-header">
+      <span class="section-num">07</span>
+      <h2>
+        <span data-lang="en" class="visible">Contact</span>
+        <span data-lang="tr">İletişim</span>
+        <span data-lang="de">Kontakt</span>
+      </h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="contact-row">
+      <a class="contact-item" href="mailto:bayraktara508@gmail.com">
+        <svg class="icon-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+        bayraktara508@gmail.com
+      </a>
+      <a class="contact-item" href="tel:+905510528296">
+        <svg class="icon-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13 19.79 19.79 0 0 1 1.61 4.37 2 2 0 0 1 3.58 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.18 6.18l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        (551) 052 82 96
+      </a>
+      <a class="contact-item" href="https://www.linkedin.com/in/ali-bayraktar-b64072286" target="_blank" rel="noopener">
+        <svg class="icon-linkedin" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        LinkedIn
+      </a>
+      <a class="contact-item" href="https://github.com/alibayraktar00" target="_blank" rel="noopener">
+        <svg class="icon-github" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+        GitHub
+      </a>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <span data-lang="en" class="visible">© 2025 Ali Bayraktar · Built with passion · Kayseri, Türkiye</span>
+  <span data-lang="tr">© 2025 Ali Bayraktar · Tutkuyla yapıldı · Kayseri, Türkiye</span>
+  <span data-lang="de">© 2025 Ali Bayraktar · Mit Leidenschaft gebaut · Kayseri, Türkei</span>
+</footer>
+
+<script>
+  let currentLang = 'en';
+
+  function setLang(lang) {
+    currentLang = lang;
+    // Hide all lang elements
+    document.querySelectorAll('[data-lang]').forEach(el => el.classList.remove('visible'));
+    document.querySelectorAll('[data-lang-inline]').forEach(el => el.classList.remove('visible'));
+    // Show current lang
+    document.querySelectorAll(`[data-lang="${lang}"]`).forEach(el => el.classList.add('visible'));
+    document.querySelectorAll(`[data-lang-inline="${lang}"]`).forEach(el => el.classList.add('visible'));
+    // Update buttons
+    document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      if (btn.textContent.trim().toLowerCase() === lang) btn.classList.add('active');
+    });
+    // Update html lang
+    document.documentElement.lang = lang === 'tr' ? 'tr' : lang === 'de' ? 'de' : 'en';
+  }
+
+  function toggleTheme() {
+    const html = document.documentElement;
+    const isDark = html.getAttribute('data-theme') === 'dark';
+    html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    document.getElementById('themeIcon').textContent = isDark ? '🌙' : '☀️';
+  }
+
+  // Initialize
+  setLang('en');
+</script>
+</body>
+</html>
